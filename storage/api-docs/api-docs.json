@@ -1,0 +1,303 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Customers API",
+        "description": "",
+        "contact": {
+            "name": "Suporte da API",
+            "email": "f.paredes.o@gmail.com"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://my-default-host.com",
+            "description": "API Server"
+        }
+    ],
+    "paths": {
+        "/customers": {
+            "get": {
+                "tags": [
+                    "Customers"
+                ],
+                "summary": "Obter lista de clientes",
+                "description": "Retorna uma lista paginada de clientes. A lista pode ser filtrada por nome.",
+                "operationId": "indexCustomer",
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "Filtrar por nome",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Define o número de resultados por página",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64",
+                            "default": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operação bem-sucedida",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PagedCustomers"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Solicitação inválida"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Customers"
+                ],
+                "summary": "Cria um novo cliente",
+                "description": "Cria um novo cliente e retorna o cliente criado",
+                "operationId": "storeCustomer",
+                "requestBody": {
+                    "description": "Dados do novo cliente",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Customer"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Cliente criado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Customer"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Solicitação inválida"
+                    },
+                    "422": {
+                        "description": "Erro de validação"
+                    }
+                }
+            }
+        },
+        "/customers/{id}": {
+            "get": {
+                "tags": [
+                    "Customers"
+                ],
+                "summary": "Mostra os detalhes de um cliente específico",
+                "description": "Retorna os detalhes de um cliente específico pelo ID",
+                "operationId": "showCustomer",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID do cliente a ser visualizado",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operação bem-sucedida",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Customer"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Cliente não encontrado"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Customers"
+                ],
+                "summary": "Atualiza um cliente existente",
+                "description": "Atualiza um cliente existente e retorna o cliente atualizado",
+                "operationId": "updateCustomer",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID do cliente a ser atualizado",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Dados do cliente a serem atualizados",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Customer"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Cliente atualizado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Customer"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Solicitação inválida"
+                    },
+                    "404": {
+                        "description": "Cliente não encontrado"
+                    },
+                    "422": {
+                        "description": "Erro de validação"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Customers"
+                ],
+                "summary": "Exclui um cliente existente",
+                "description": "Exclui um cliente existente pelo ID",
+                "operationId": "destroyCustomer",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID do cliente a ser excluído",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Cliente excluído com sucesso"
+                    },
+                    "400": {
+                        "description": "Solicitação inválida"
+                    },
+                    "404": {
+                        "description": "Cliente não encontrado"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "PagedInfo": {
+                "properties": {
+                    "current_page": {
+                        "description": "The current page number",
+                        "type": "integer"
+                    },
+                    "total": {
+                        "description": "The total number of pages",
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "PagedCustomers": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/PagedInfo"
+                    },
+                    {
+                        "properties": {
+                            "data": {
+                                "description": "A lista de cientes",
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/Customer"
+                                }
+                            },
+                            "meta": {
+                                "$ref": "#/components/schemas/PagedInfo"
+                            }
+                        }
+                    }
+                ]
+            },
+            "Customer": {
+                "required": [
+                    "name",
+                    "cpf",
+                    "birth_date",
+                    "gender",
+                    "address",
+                    "state",
+                    "city"
+                ],
+                "properties": {
+                    "cpf": {
+                        "description": "CPF do cliente",
+                        "type": "string"
+                    },
+                    "name": {
+                        "description": "Nome do cliente",
+                        "type": "string"
+                    },
+                    "birth_date": {
+                        "description": "Data de nascimento do cliente",
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "gender": {
+                        "description": "Gênero do cliente",
+                        "type": "string"
+                    },
+                    "address": {
+                        "description": "Endereço do cliente",
+                        "type": "string"
+                    },
+                    "state": {
+                        "description": "Estado do cliente",
+                        "type": "string"
+                    },
+                    "city": {
+                        "description": "Cidade do cliente",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            }
+        }
+    }
+}
